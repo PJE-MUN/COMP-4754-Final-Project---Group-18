@@ -225,7 +225,7 @@ DROP TABLE IF EXISTS `prescription`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `prescription` (
-  `drug_id` int NOT NULL AUTO_INCREMENT,
+  `drug_id` int NOT NULL,
   `doctor_id` int NOT NULL,
   `patient_id` int NOT NULL,
   `doses` int NOT NULL,
@@ -281,12 +281,12 @@ DROP TABLE IF EXISTS `procedure`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `procedure` (
-  `procedure_id` int NOT NULL AUTO_INCREMENT,
+  `procedure_id` int NOT NULL,
   `appointment_id` int NOT NULL,
   `doctor_id` int NOT NULL,
   `patient_id` int NOT NULL,
   `date` date NOT NULL,
-  `time` time NOT NULL,
+  `notes` text NOT NULL,
   PRIMARY KEY (`procedure_id`),
   KEY `appointment_id` (`appointment_id`),
   KEY `doctor_id` (`doctor_id`),
@@ -303,7 +303,7 @@ CREATE TABLE `procedure` (
 
 LOCK TABLES `procedure` WRITE;
 /*!40000 ALTER TABLE `procedure` DISABLE KEYS */;
-INSERT INTO `procedure` VALUES (1,1,2,1,'2023-07-10',''),(2,2,1,2,'2023-09-12',''),(3,1,2,3,'2024-07-10',''),(4,2,1,4,'2024-09-11','');
+INSERT INTO `procedure` VALUES (1,1,2,1,'2023-07-10','patient needs post op care'),(2,2,1,2,'2023-09-12','successful procedure'),(3,1,2,3,'2024-07-10','faulty anesthesia machine'),(4,2,1,4,'2024-09-11','Patient was impatient');
 /*!40000 ALTER TABLE `procedure` ENABLE KEYS */;
 UNLOCK TABLES;
 
