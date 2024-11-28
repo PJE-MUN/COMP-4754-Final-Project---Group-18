@@ -20,10 +20,7 @@ USE `hospital_db`;
 --
 -- Table structure for table `admin`
 --
-CREATE ROLE if not exists admin;
-CREATE ROLE if not exists patient;
-grant all on Hospital.* to nurse;
-grant SELECT on Hospital.appts to patient;
+
 DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -210,127 +207,6 @@ CREATE TABLE `patient` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DELIMITER //
-CREATE PROCEDURE create_patient(
-	IN nurse INT,
-	IN f_name VARCHAR(50),
-	IN l_name VARCHAR(50),
-	IN dateofbirth date,
-    IN phoneno VARCHAR(15),
-    IN email_address VARCHAR(100),
-    IN postal VARCHAR(10),
-    IN street_ VARCHAR(100),
-    IN city_ VARCHAR(100),
-    IN province_ VARCHAR(100)
-)
-BEGIN
-START TRANSACTION;
-INSERT INTO patient (nurse_id, fname, lname, dob, phone, email, postal_code) VALUES (nurse, f_name, l_name, dateofbirth, phoneno, email_address, postal);
-INSERT INTO address (postal_code, street, city, province) VALUES (postal, street_, city_, province_);
-COMMIT;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE update_patient (
-	IN pid INT,
-	IN nurse INT,
-	IN f_name VARCHAR(50),
-	IN l_name VARCHAR(50),
-	IN dateofbirth date,
-    IN phoneno VARCHAR(15),
-    IN email_address VARCHAR(100),
-    IN postal VARCHAR(10),
-    IN street_ VARCHAR(100),
-    IN city_ VARCHAR(100),
-    IN province_ VARCHAR(100)
-)
-BEGIN
-Start Transaction;
-UPDATE patient
-SET nurse_id = nurse,
-	fname = f_name,
-    lname = l_name,
-    dob = dateofbirth,
-    phone = phoneno,
-    email = email_address,
-    postal_code = postal
-WHERE patient_id = pid;
-UPDATE address
-SET street = street_,
-	city = city_,
-    province = province_
-WHERE postal_code = postal;
-COMMIT;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE delete_patient (
-	IN pid INT
-)
-BEGIN
-Start Transaction;
-DELETE FROM patient WHERE patient_id = pid;
-COMMIT;
-END //
-DELIMITER ;
-
-DROP TABLE IF EXISTS department;
-CREATE TABLE department (
-	department_id INT NOT NULL AUTO_INCREMENT,
-    head_id INT NOT NULL,
-    dept_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
-    PRIMARY KEY (department_id),
-    FOREIGN KEY (head_id) REFERENCES doctor (doctor_id)
-)
-
-DELIMITER //
-CREATE PROCEDURE create_dept(
-	IN head INT,
-	IN dname VARCHAR(100),
-	IN demail VARCHAR(100),
-    IN dphone VARCHAR (15)
-)
-BEGIN
-START TRANSACTION;
-INSERT INTO department (head_id, dept_name, email, phone) VALUES (head, dname, demail, dphone);
-COMMIT;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE update_dept(
-	IN dept_id INT,
-    IN head INT,
-	IN dname VARCHAR (100),
-    IN demail VARCHAR(100),
-    IN dphone VARCHAR (15)
-)
-BEGIN 
-START TRANSACTION;
-UPDATE department
-SET dept_head = head,
-    department_name = dname,
-    email = demail,
-    phone = dphone
-WHERE department_id = dept_id;
-COMMIT;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE delete_dept(
-	IN dept_id INT
-)
-BEGIN
-START TRANSACTION;
-DELETE FROM department WHERE department_id = dept_id;
-COMMIT;
-END //
-DELIMITER ;
 --
 -- Dumping data for table `patient`
 --
@@ -340,6 +216,130 @@ LOCK TABLES `patient` WRITE;
 INSERT INTO `patient` VALUES (1,1,'Michael','Johnson','1990-05-12','1234567892','michael.johnson@example.com','A1B2C3'),(2,2,'Sarah','Williams','1985-11-23','0987654323','sarah.williams@example.com','D4E5F6'),(3,2,'Miah','Rahim','1999-11-04','3298479302','miah@rahim@hotmail.com','A1B1T8'),(4,1,'dihan1','na','1999-12-05','8989898989','na@ga.com','a1a2s1');
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `prescription`
+--
+
+DROP TABLE IF EXISTS `prescription`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `prescription` (
+  `drug_id` int NOT NULL,
+  `doctor_id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  `doses` int NOT NULL,
+  `start_date` date NOT NULL,
+  `duration` varchar(50) NOT NULL,
+  PRIMARY KEY (`drug_id`),
+  KEY `doctor_id` (`doctor_id`),
+  KEY `patient_id` (`patient_id`),
+  CONSTRAINT `prescription_ibfk_1` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`) ON DELETE CASCADE,
+  CONSTRAINT `prescription_ibfk_2` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prescription`
+--
+
+LOCK TABLES `prescription` WRITE;
+/*!40000 ALTER TABLE `prescription` DISABLE KEYS */;
+INSERT INTO `prescription` VALUES (1,1,1,3,'2024-11-28','2 weeks'),(2,1,2,1,'2024-09-01','1 month');
+/*!40000 ALTER TABLE `prescription` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `drugs`
+--
+
+DROP TABLE IF EXISTS `drugs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `drugs` (
+  `drug_id` int NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  PRIMARY KEY (`drug_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `drugs`
+--
+
+LOCK TABLES `drugs` WRITE;
+/*!40000 ALTER TABLE `drugs` DISABLE KEYS */;
+INSERT INTO `drugs` VALUES (1,'Acetaminophen'),(2,'Buprenorphine'),(3,'Citalopram'),(4,'Tylenol'),(5,'Ibuprofen');
+/*!40000 ALTER TABLE `drugs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `procedure`
+--
+
+DROP TABLE IF EXISTS `procedure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `procedure` (
+  `procedure_id` int NOT NULL,
+  `appointment_id` int NOT NULL,
+  `doctor_id` int NOT NULL,
+  `patient_id` int NOT NULL,
+  `date` date NOT NULL,
+  `notes` text NOT NULL,
+  PRIMARY KEY (`procedure_id`),
+  KEY `appointment_id` (`appointment_id`),
+  KEY `doctor_id` (`doctor_id`),
+  KEY `patient_id` (`patient_id`),
+  CONSTRAINT `procedure_ibfk_1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`appointment_id`),
+  CONSTRAINT `procedure_ibfk_2` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`) ON DELETE CASCADE,
+  CONSTRAINT `procedure_ibfk_3` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `procedure`
+--
+
+LOCK TABLES `procedure` WRITE;
+/*!40000 ALTER TABLE `procedure` DISABLE KEYS */;
+INSERT INTO `procedure` VALUES (1,1,2,1,'2023-07-10','patient needs post op care'),(2,2,1,2,'2023-09-12','successful procedure'),(3,1,2,3,'2024-07-10','faulty anesthesia machine'),(4,2,1,4,'2024-09-11','Patient was impatient');
+/*!40000 ALTER TABLE `procedure` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `operations`
+--
+
+DROP TABLE IF EXISTS `operations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `operations` (
+  `procedure_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `duration` varchar(50) NOT NULL,
+  `cost` int NOT NULL,
+  PRIMARY KEY (`procedure_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `operations`
+--
+
+LOCK TABLES `operations` WRITE;
+/*!40000 ALTER TABLE `operations` DISABLE KEYS */;
+INSERT INTO `operations` VALUES (1,'Cholecystectomy','2 hours',5000),(2,'Arthroscopy','4 hours',7500),(3,'Mastectomy','30 minutes',2000),(4,'Colostomy','8 hours',12500);
+/*!40000 ALTER TABLE `operations` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+
+
+
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

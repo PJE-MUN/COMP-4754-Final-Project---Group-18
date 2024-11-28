@@ -108,7 +108,7 @@ class Hospital:
             conn = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Realmadrid1$",  # Update as needed
+                password="Memorial092000*",  # Update as needed
                 database="hospital_db"
             )
             cursor = conn.cursor()
@@ -165,7 +165,7 @@ class Hospital:
             conn = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Realmadrid1$",  # Update as needed
+                password="Memorial092000*",  # Update as needed
                 database="hospital_db"
             )
             cursor = conn.cursor()
@@ -207,7 +207,7 @@ class Hospital:
             conn = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Realmadrid1$",  # Update as needed
+                password="Memorial092000*",  # Update as needed
                 database="hospital_db"
             )
             cursor = conn.cursor()
@@ -256,7 +256,7 @@ class Hospital:
         details_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
         details_frame.place(x=50, y=100, width=1400, height=300)
 
-        lbl_details = Label(details_frame, text="Nurse Details", font=("Arial", 18, "bold"), bg="white", fg="black")
+        lbl_details = Label(details_frame, text="Personal Information", font=("Arial", 18, "bold"), bg="white", fg="black")
         lbl_details.pack(side=TOP, pady=10)
 
         # Query nurse details
@@ -264,7 +264,7 @@ class Hospital:
             conn = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Realmadrid1$",  # Update as needed
+                password="Memorial092000*",  # Update as needed
                 database="hospital_db"
             )
             cursor = conn.cursor()
@@ -299,13 +299,13 @@ class Hospital:
 
         # Buttons for CRUD operations
         btn_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
-        btn_frame.place(x=400, y=450, width=800, height=100)  # Slightly shifted to center
+        btn_frame.place(x=250, y=450, width=1000, height=100)  # Slightly shifted to center
 
         # Center and enlarge buttons
-        Button(btn_frame, text="Create", font=("Arial", 16, "bold"), bg="blue", fg="white", width=10, command=self.create_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
-        Button(btn_frame, text="View", font=("Arial", 16, "bold"), bg="green", fg="white", width=10, command=self.view_appointments_nurse).pack(side=LEFT, padx=20, pady=10)
-        Button(btn_frame, text="Update", font=("Arial", 16, "bold"), bg="orange", fg="white", width=10, command=self.update_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
-        Button(btn_frame, text="Delete", font=("Arial", 16, "bold"), bg="red", fg="white", width=10, command=self.delete_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="New Record", font=("Arial", 16, "bold"), bg="blue", fg="white", width=15, command=self.create_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="View Records", font=("Arial", 16, "bold"), bg="green", fg="white", width=15, command=self.view_appointments_nurse).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="Update Record", font=("Arial", 16, "bold"), bg="orange", fg="white", width=15, command=self.update_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="Delete Records", font=("Arial", 16, "bold"), bg="red", fg="white", width=15, command=self.delete_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
 
 
     def doctor_dashboard(self, username):
@@ -321,7 +321,7 @@ class Hospital:
         details_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
         details_frame.place(x=50, y=100, width=1400, height=300)
 
-        lbl_details = Label(details_frame, text="Doctor Details", font=("Arial", 18, "bold"), bg="white", fg="black")
+        lbl_details = Label(details_frame, text="Doctor Information", font=("Arial", 18, "bold"), bg="white", fg="black")
         lbl_details.pack(side=TOP, pady=10)
 
         # Query doctor details
@@ -329,7 +329,7 @@ class Hospital:
             conn = mysql.connector.connect(
                 host="localhost",
                 user="root",
-                password="Realmadrid1$",  # Update as needed
+                password="Memorial092000*",  # Update as needed
                 database="hospital_db"
             )
             cursor = conn.cursor()
@@ -363,7 +363,310 @@ class Hospital:
             print(f"Database Error: {err}")
             messagebox.showerror("Database Error", f"Error: {err}")
 
+        # Buttons for CRUD operations
+        btn_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
+        btn_frame.place(x=250, y=450, width=1000, height=100)  # Slightly shifted to center
 
+        # Center and enlarge buttons
+        Button(btn_frame, text="New Record", font=("Arial", 16, "bold"), bg="blue", fg="white", width=15, command=self.doctor_create_dashboard).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="View Records", font=("Arial", 16, "bold"), bg="green", fg="white", width=15, command=self.view_appointments_doctor).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="Update Records", font=("Arial", 16, "bold"), bg="orange", fg="white", width=15, command=self.update_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="Delete Records", font=("Arial", 16, "bold"), bg="red", fg="white", width=15, command=self.delete_appointment_nurse).pack(side=LEFT, padx=20, pady=10)
+
+    def doctor_create_dashboard(self):
+        # Popup window for creating a dashboard
+        create_win = Toplevel(self.root)
+        create_win.title("Create Appointment")
+        create_win.geometry("800x600")
+        
+        # Buttons for CRUD operations
+        btn_frame = Frame(create_win, bg="white", bd=5, relief=RIDGE)
+        btn_frame.place(x=150, y=250, width=500, height=100)  # Slightly shifted to center
+
+        def create_prescription():
+            # Clear the root window
+            for widget in create_win.winfo_children():
+                widget.destroy()
+
+            # Frame for input fields
+            frame = Frame(create_win, padx=20, pady=20)
+            frame.pack(fill="both", expand=True)
+
+            # Drug ID
+            Label(frame, text="Drug ID:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+            drug_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            drug_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+
+            # Doctor ID
+            Label(frame, text="Doctor ID:", font=("Arial", 12), anchor="w").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+            doctor_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            doctor_id_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+            # Patient ID
+            Label(frame, text="Patient ID:", font=("Arial", 12), anchor="w").grid(row=5, column=0, padx=10, pady=5, sticky="w")
+            patient_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            patient_id_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+
+            # Dosage
+            Label(frame, text="Dosage:", font=("Arial", 12), anchor="w").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+            dosage_entry = Entry(frame, font=("Arial", 12), width=40)
+            dosage_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+            # Date
+            Label(frame, text="Date (YYYY-MM-DD):", font=("Arial", 12), anchor="w").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+            date_entry = Entry(frame, font=("Arial", 12), width=40)
+            date_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+            # Duration (Larger Text Area)
+            Label(frame, text="Duration:", font=("Arial", 12), anchor="w").grid(row=3, column=0, padx=10, pady=5, sticky="nw")
+            duration_entry = Text(frame, font=("Arial", 12), width=40, height=5, wrap="word")
+            duration_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+
+            # Save Appointment Button
+            def save_prescription():
+                # Fetch user input
+                drug_id = drug_id_entry.get().strip()
+                doctor_id = doctor_id_entry.get().strip()
+                patient_id = patient_id_entry.get().strip()
+                dosage = dosage_entry.get().strip()
+                date = date_entry.get().strip()
+                duration = duration_entry.get().strip()
+
+                # Save to database
+                try:
+                    conn = mysql.connector.connect(
+                        host="localhost",
+                        user="root",
+                        password="Memorial092000*",  # Update as needed
+                        database="hospital_db"
+                    )
+                    cursor = conn.cursor()
+
+                    # Insert query
+                    query = """
+                        INSERT INTO appointment (appointment_id, date, time, reason, doctor_id, patient_id, priority, nurse_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(query, (drug_id, doctor_id, patient_id, dosage, date, duration))
+                    conn.commit()
+                    conn.close()
+
+                    messagebox.showinfo("Success", "Prescription created successfully!")
+                    create_win.destroy()
+
+                except mysql.connector.Error as err:
+                    print(f"Database Error: {err}")
+                    messagebox.showerror("Database Error", f"Error: {err}")
+
+                # Add Save Button
+                Button(frame, text="Save Prescription", font=("Arial", 12, "bold"), bg="green", fg="white", command=save_prescription).grid(
+                    row=8, column=1, padx=(50, 10), pady=20, sticky="e"
+                )
+
+        def create_procedure():
+            # Clear the root window
+            for widget in create_win.winfo_children():
+                widget.destroy()
+
+            # Frame for input fields
+            frame = Frame(create_win, padx=20, pady=20)
+            frame.pack(fill="both", expand=True)
+
+            # Procedure ID
+            Label(frame, text="Procedure ID:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+            procedure_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            procedure_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+
+            # Appointment ID
+            Label(frame, text="Appointment ID:", font=("Arial", 12), anchor="w").grid(row=5, column=0, padx=10, pady=5, sticky="w")
+            appointment_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            appointment_id_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+
+            # Doctor ID
+            Label(frame, text="Doctor ID:", font=("Arial", 12), anchor="w").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+            doctor_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            doctor_id_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+            # Patient ID
+            Label(frame, text="Patient ID:", font=("Arial", 12), anchor="w").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+            patient_id_entry = Entry(frame, font=("Arial", 12), width=40)
+            patient_id_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+            # Date
+            Label(frame, text="Date (YYYY-MM-DD):", font=("Arial", 12), anchor="w").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+            date_entry = Entry(frame, font=("Arial", 12), width=40)
+            date_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+
+            # Notes (Larger Text Area)
+            Label(frame, text="Notes:", font=("Arial", 12), anchor="w").grid(row=3, column=0, padx=10, pady=5, sticky="nw")
+            notes_entry = Text(frame, font=("Arial", 12), width=40, height=5, wrap="word")
+            notes_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+
+            # Save Appointment Button
+            def save_procedure():
+                # Fetch user input
+                procedure_id = procedure_id_entry.get().strip()
+                appointment_id = appointment_id_entry.get().strip()
+                doctor_id = doctor_id_entry.get().strip()
+                patient_id = patient_id_entry.get().strip()
+                date = date_entry.get().strip()
+                notes = notes_entry.get("1.0", "end").strip()
+
+                # Save to database
+                try:
+                    conn = mysql.connector.connect(
+                        host="localhost",
+                        user="root",
+                        password="Memorial092000*",  # Update as needed
+                        database="hospital_db"
+                    )
+                    cursor = conn.cursor()
+
+                    # Insert query
+                    query = """
+                        INSERT INTO appointment (appointment_id, date, time, reason, doctor_id, patient_id, priority, nurse_id)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(query, (procedure_id, appointment_id, doctor_id, patient_id, date, notes))
+                    conn.commit()
+                    conn.close()
+
+                    messagebox.showinfo("Success", "Procedure created successfully!")
+                    create_win.destroy()
+
+                except mysql.connector.Error as err:
+                    print(f"Database Error: {err}")
+                    messagebox.showerror("Database Error", f"Error: {err}")
+
+            # Add Save Button
+            Button(frame, text="Save Procedure", font=("Arial", 12, "bold"), bg="green", fg="white", command=save_procedure).grid(
+                row=8, column=1, padx=(50, 10), pady=20, sticky="e"
+            )
+
+        # Center and enlarge buttons        
+        Button(btn_frame, text="New Prescription", font=("Arial", 16, "bold"), bg="orange", fg="white", width=15, command=create_prescription).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="New Procedures", font=("Arial", 16, "bold"), bg="red", fg="white", width=15, command=create_procedure).pack(side=LEFT, padx=20, pady=10)
+
+    def view_appointments_doctor(self):
+        # Popup window for viewing details
+        view_win = Toplevel(self.root)
+        view_win.title("View Records")
+        view_win.geometry("1000x600")
+
+        # Frame for Patient ID Input
+        input_frame = Frame(view_win, padx=10, pady=10)
+        input_frame.pack(fill="x", side="top")
+
+        Label(input_frame, text="Enter Patient ID:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        patient_id_entry = Entry(input_frame, font=("Arial", 12), width=20)
+        patient_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+
+        # Notebook (Tabbed View) - Initially Empty
+        notebook = ttk.Notebook(view_win)
+        notebook.pack(fill="both", expand=True)
+
+        # Tabs Placeholder
+        tabs = {
+            "Patient Information": None,
+            "Prescriptions": None,
+            "Appointments": None,
+            "Procedures": None
+        }
+
+        # Function to fetch and display patient details
+        def fetch_patient_details():
+            patient_id = patient_id_entry.get().strip()
+            if not patient_id:
+                messagebox.showerror("Error", "Please enter a valid Patient Name.")
+                return
+
+            # Remove existing tabs (if any)
+            for tab_name, tab_frame in tabs.items():
+                if tab_frame:
+                    notebook.forget(tab_frame)
+
+            # Create tabs for Patient Data, Prescription Record, Appointment Details, and Procedures
+            for tab_name in tabs.keys():
+                tabs[tab_name] = ttk.Frame(notebook)
+                notebook.add(tabs[tab_name], text=tab_name)
+
+            # Helper function to populate a tab with a Treeview
+            def populate_tab(tab_frame, columns, query, params=()):
+                # Frame for Treeview
+                tree_frame = Frame(tab_frame, padx=10, pady=10)
+                tree_frame.pack(fill="both", expand=True)
+
+                # Treeview for displaying data
+                tree = ttk.Treeview(tree_frame, columns=columns, show="headings")
+                tree.pack(fill="both", expand=True)
+
+                # Define column headings
+                for col in columns:
+                    tree.heading(col, text=col.capitalize())
+                    tree.column(col, width=120, anchor="center")
+
+                # Fetch data from database
+                try:
+                    conn = mysql.connector.connect(
+                        host="localhost",
+                        user="root",
+                        password="Memorial092000*",  # Update as needed
+                        database="hospital_db"
+                    )
+                    cursor = conn.cursor()
+                    cursor.execute(query, params)
+                    rows = cursor.fetchall()
+                    conn.close()
+
+                    # Insert rows into Treeview
+                    for row in rows:
+                        tree.insert("", "end", values=row)
+                except mysql.connector.Error as err:
+                    print(f"Database Error: {err}")
+                    messagebox.showerror("Database Error", f"Error: {err}")
+
+            # Populate Patient Tab
+            patient_columns = ["patient_id", "fname", "lname", "dob", "phone", "email", "postal_code"]
+            patient_query = """
+                SELECT patient_id, fname, lname, dob, phone, email, postal_code
+                FROM patient
+                WHERE patient_id = %s
+            """
+            populate_tab(tabs["Patient Information"], patient_columns, patient_query, params=(patient_id,))
+
+            # Populate Prescriptions Tab
+            prescription_columns = ["prescription_id", "drug_name", "dosage", "prescription duration", "date"]
+            prescription_query = """
+                SELECT pr.drug_id, dr.name, pr.doses, pr.duration, pr.start_date
+                FROM prescription pr, drugs dr
+                WHERE dr.drug_id=pr.drug_id AND patient_id = %s
+            """
+            populate_tab(tabs["Prescriptions"], prescription_columns, prescription_query, params=(patient_id,))
+
+            # Populate Appointments Tab
+            appointment_columns = ["appointment_id", "date", "time", "reason", "doctor_id", "priority", "nurse_id"]
+            appointment_query = """
+                SELECT appointment_id, date, time, reason, doctor_id, priority, nurse_id
+                FROM appointment
+                WHERE patient_id = %s
+            """
+            populate_tab(tabs["Appointments"], appointment_columns, appointment_query, params=(patient_id,))
+
+            # Populate Procedures Tab
+            procedure_columns = ["procedure_id", "procedure_name", "date", "doctor_id", "notes"]
+            procedure_query = """
+                SELECT pr.procedure_id, op.name, pr.date, pr.doctor_id, pr.notes
+                FROM procedure pr
+                INNER JOIN operations op
+                ON pr.procedure_id=op.procedure_id
+                WHERE patient_id = %s
+            """
+            populate_tab(tabs["Procedures"], procedure_columns, procedure_query, params=(patient_id,))
+
+        # Fetch Button
+        Button(input_frame, text="Fetch Details", font=("Arial", 12, "bold"), bg="blue", fg="white", command=fetch_patient_details).grid(
+            row=0, column=2, padx=10, pady=5, sticky="w"
+        )
 
     def create_appointment_nurse(self):
         # Popup window for creating an appointment
@@ -443,7 +746,7 @@ class Hospital:
                 conn = mysql.connector.connect(
                     host="localhost",
                     user="root",
-                    password="Realmadrid1$",  # Update as needed
+                    password="Memorial092000*",  # Update as needed
                     database="hospital_db"
                 )
                 cursor = conn.cursor()
@@ -468,7 +771,7 @@ class Hospital:
         Button(frame, text="Save Appointment", font=("Arial", 12, "bold"), bg="green", fg="white", command=save_appointment).grid(
             row=8, column=1, padx=(50, 10), pady=20, sticky="e"
         )
-
+    
     def view_appointments_nurse(self):
         # Popup window for viewing details
         view_win = Toplevel(self.root)
@@ -531,7 +834,7 @@ class Hospital:
                     conn = mysql.connector.connect(
                         host="localhost",
                         user="root",
-                        password="Realmadrid1$",  # Update as needed
+                        password="Memorial092000*",  # Update as needed
                         database="hospital_db"
                     )
                     cursor = conn.cursor()
@@ -547,11 +850,11 @@ class Hospital:
                     messagebox.showerror("Database Error", f"Error: {err}")
 
             # Populate Prescriptions Tab
-            prescription_columns = ["prescription_id", "medication_name", "dosage", "instructions", "date"]
+            prescription_columns = ["prescription_id", "drug_name", "dosage", "prescription duration", "date"]
             prescription_query = """
-                SELECT prescription_id, medication_name, dosage, instructions, date
-                FROM prescriptions
-                WHERE patient_id = %s
+                SELECT pr.drug_id, dr.name, pr.doses, pr.duration, pr.start_date
+                FROM prescription pr, drugs dr
+                WHERE dr.drug_id=pr.drug_id AND patient_id = %s
             """
             populate_tab(tabs["Prescriptions"], prescription_columns, prescription_query, params=(patient_id,))
 
@@ -567,8 +870,9 @@ class Hospital:
             # Populate Procedures Tab
             procedure_columns = ["procedure_id", "procedure_name", "date", "doctor_id", "notes"]
             procedure_query = """
-                SELECT procedure_id, procedure_name, date, doctor_id, notes
-                FROM procedures
+                SELECT proc.procedure_id, op.name, proc.date, proc.doctor_id, proc.notes
+                FROM procedure proc
+                INNER JOIN operations op ON op.procedure_id=proc.procedure_id
                 WHERE patient_id = %s
             """
             populate_tab(tabs["Procedures"], procedure_columns, procedure_query, params=(patient_id,))
@@ -625,7 +929,7 @@ class Hospital:
                 conn = mysql.connector.connect(
                     host="localhost",
                     user="root",
-                    password="Realmadrid1$",  # Update as needed
+                    password="Memorial092000*",  # Update as needed
                     database="hospital_db"
                 )
                 cursor = conn.cursor()
@@ -676,7 +980,7 @@ class Hospital:
                 conn = mysql.connector.connect(
                     host="localhost",
                     user="root",
-                    password="Realmadrid1$",  # Update as needed
+                    password="Memorial092000*",  # Update as needed
                     database="hospital_db"
                 )
                 cursor = conn.cursor()
@@ -742,7 +1046,7 @@ class Hospital:
                 conn = mysql.connector.connect(
                     host="localhost",
                     user="root",
-                    password="Realmadrid1$",  # Update as needed
+                    password="Memorial092000*",  # Update as needed
                     database="hospital_db"
                 )
                 cursor = conn.cursor()
