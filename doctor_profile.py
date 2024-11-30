@@ -206,7 +206,7 @@ def doctor_create_dashboard(self):
 
                 # Insert query
                 query = """
-                    INSERT INTO procedure (procedure_id, appointment_id, doctor_id, patient_id, date, notes)
+                    INSERT INTO procedures (procedure_id, appointment_id, doctor_id, patient_id, procedure_date, notes)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(query, (procedure_id, appointment_id, doctor_id, patient_id, date, notes))
@@ -332,11 +332,9 @@ def view_patient_doctor(self):
         # Populate Procedures Tab
         procedure_columns = ["procedure_id", "procedure_name", "date", "doctor_id", "notes"]
         procedure_query = """
-            SELECT pr.procedure_id, op.name, pr.date, pr.doctor_id, pr.notes
-                FROM procedure pr
-                INNER JOIN operations op
-                ON pr.procedure_id=op.procedure_id
-                WHERE patient_id = %s
+            SELECT pr.procedure_id, op.name, pr.procedure_date, pr.doctor_id, pr.notes
+                FROM procedures pr, operations op
+                WHERE pr.procedure_id=op.procedure_id AND patient_id = %s
         """
         populate_tab(tabs["Procedures"], procedure_columns, procedure_query, params=(patient_id,))
 
@@ -362,7 +360,7 @@ def doctor_update_dashboard(self):
         frame.pack(fill="both", expand=True)
         
         # Drug ID to fetch
-        Label(frame, text="Enter Drug ID to Update Prescription:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        Label(frame, text="Enter Drug(Prescription) ID to Update Prescription:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
         drug_id_entry = Entry(frame, font=("Arial", 12), width=40)
         drug_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
@@ -505,8 +503,8 @@ def doctor_update_dashboard(self):
                 conn = gen_sql_connection.my_sql_connector()
                 cursor = conn.cursor()
                 query = """
-                    SELECT procedure_id, appointment_id, doctor_id, patient_id, date, notes
-                    FROM procedure
+                    SELECT procedure_id, appointment_id, doctor_id, patient_id, procedure_date, notes
+                    FROM procedures
                     WHERE procedure_id = %s
                 """
                 cursor.execute(query, (procedure_id,))
@@ -551,8 +549,8 @@ def doctor_update_dashboard(self):
                 conn = gen_sql_connection.my_sql_connector()
                 cursor = conn.cursor()
                 query = """
-                    UPDATE procedure
-                    SET procedure_id = %s, appointment_id = %s, doctor_id = %s, patient_id = %s, date = %s, notes = %s
+                    UPDATE procedures
+                    SET procedure_id = %s, appointment_id = %s, doctor_id = %s, patient_id = %s, procedure_date = %s, notes = %s
                     WHERE procedure_id = %s
                 """
                 cursor.execute(query, (*new_values, procedure_id))
@@ -582,7 +580,7 @@ def doctor_update_dashboard(self):
 def doctor_delete_dashboard(self):
     # Popup window for deleting an appointment
     delete_win = Toplevel(self.root)
-    delete_win.title("Delete Appointment")
+    delete_win.title("Delete Prescription & Procedure")
     delete_win.geometry("800x250")  # Increased size for better layout
     delete_win.resizable(False, False)  # Disable resizing of the window
 
@@ -672,7 +670,7 @@ def doctor_delete_dashboard(self):
                 cursor = conn.cursor()
 
                 # Delete query
-                query = "DELETE FROM procedure WHERE procedure_id = %s"
+                query = "DELETE FROM procedures WHERE procedure_id = %s"
                 cursor.execute(query, (procedure_id,))
                 conn.commit()
                 conn.close()
