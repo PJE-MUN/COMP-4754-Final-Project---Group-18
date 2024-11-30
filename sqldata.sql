@@ -277,23 +277,23 @@ UNLOCK TABLES;
 -- Table structure for table `procedure`
 --
 
-DROP TABLE IF EXISTS `procedure`;
+DROP TABLE IF EXISTS `procedures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `procedure` (
+CREATE TABLE `procedures` (
   `procedure_id` int NOT NULL,
   `appointment_id` int NOT NULL,
   `doctor_id` int NOT NULL,
   `patient_id` int NOT NULL,
-  `date` date NOT NULL,
+  `procedure_date` date NOT NULL,
   `notes` text NOT NULL,
   PRIMARY KEY (`procedure_id`),
   KEY `appointment_id` (`appointment_id`),
   KEY `doctor_id` (`doctor_id`),
   KEY `patient_id` (`patient_id`),
-  CONSTRAINT `procedure_ibfk_1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`appointment_id`),
-  CONSTRAINT `procedure_ibfk_2` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`) ON DELETE CASCADE,
-  CONSTRAINT `procedure_ibfk_3` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON DELETE CASCADE
+  CONSTRAINT `procedures_ibfk_1` FOREIGN KEY (`appointment_id`) REFERENCES `appointment` (`appointment_id`),
+  CONSTRAINT `procedures_ibfk_2` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`) ON DELETE CASCADE,
+  CONSTRAINT `procedures_ibfk_3` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -301,11 +301,44 @@ CREATE TABLE `procedure` (
 -- Dumping data for table `procedure`
 --
 
-LOCK TABLES `procedure` WRITE;
-/*!40000 ALTER TABLE `procedure` DISABLE KEYS */;
-INSERT INTO `procedure` VALUES (1,1,2,1,'2023-07-10','patient needs post op care'),(2,2,1,2,'2023-09-12','successful procedure'),(3,1,2,3,'2024-07-10','faulty anesthesia machine'),(4,2,1,4,'2024-09-11','Patient was impatient');
-/*!40000 ALTER TABLE `procedure` ENABLE KEYS */;
+LOCK TABLES `procedures` WRITE;
+/*!40000 ALTER TABLE `procedures` DISABLE KEYS */;
+INSERT INTO `procedures` VALUES (1,1,2,1,'2023-07-10','patient needs post op care'),(2,2,1,2,'2023-09-12','successful procedure'),(3,1,2,3,'2024-07-10','faulty anesthesia machine'),(4,2,1,4,'2024-09-11','Patient was impatient');
+/*!40000 ALTER TABLE `procedures` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Create a view to fetch patient details
+--
+
+CREATE VIEW ProcedureDetails AS
+	SELECT procedure_id, appointment_id, doctor_id, patient_id, procedure_date, notes
+		FROM procedures
+
+--
+-- Create a procedure to update medical records
+--
+
+DELIMITER //
+CREATE PROCEDURE UpdateProcedure(
+    IN new_procedure_id INT,
+	IN new_appointment_id INT,
+	IN new_doctor_id INT,
+	IN new_patient_id INT,
+	IN new_date DATE,
+	IN new_notes TEXT
+)
+BEGIN
+    UPDATE procedures
+    SET procedure_id = new_procedure_id,
+        appointment_id = new_appointment_id,
+        doctor_id = new_doctor_id,
+        patient_id = new_patient_id,
+        procedure_date = new_date,
+        notes = new_notes
+    WHERE procedure_id = new_procedure_id;
+END //
+DELIMITER ;
 
 --
 -- Table structure for table `operations`
