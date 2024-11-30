@@ -255,8 +255,8 @@ def view_appointments_nurse(self):
         # Populate Procedures Tab
         procedure_columns = ["procedure_id", "procedure_name", "date", "doctor_id", "notes"]
         procedure_query = """
-            SELECT proc.procedure_id, op.name, proc.date, proc.doctor_id, proc.notes
-            FROM procedure proc
+            SELECT proc.procedure_id, op.name, proc.procedure_date, proc.doctor_id, proc.notes
+            FROM procedures proc
             INNER JOIN operations op ON op.procedure_id=proc.procedure_id
             WHERE patient_id = %s
         """
