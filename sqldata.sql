@@ -207,6 +207,129 @@ CREATE TABLE `patient` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 CREATE INDEX patient_index ON PATIENT (patient_id);
+
+DELIMITER //
+CREATE PROCEDURE create_patient(
+	IN nurse INT,
+	IN f_name VARCHAR(50),
+	IN l_name VARCHAR(50),
+	IN dateofbirth date,
+    IN phoneno VARCHAR(15),
+    IN email_address VARCHAR(100),
+    IN postal VARCHAR(10),
+    IN street_ VARCHAR(100),
+    IN city_ VARCHAR(100),
+    IN province_ VARCHAR(100)
+)
+BEGIN
+START TRANSACTION;
+INSERT INTO patient (nurse_id, fname, lname, dob, phone, email, postal_code) VALUES (nurse, f_name, l_name, dateofbirth, phoneno, email_address, postal);
+INSERT INTO address (postal_code, street, city, province) VALUES (postal, street_, city_, province_);
+COMMIT;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_patient (
+	IN pid INT,
+	IN nurse INT,
+	IN f_name VARCHAR(50),
+	IN l_name VARCHAR(50),
+	IN dateofbirth date,
+    IN phoneno VARCHAR(15),
+    IN email_address VARCHAR(100),
+    IN postal VARCHAR(10),
+    IN street_ VARCHAR(100),
+    IN city_ VARCHAR(100),
+    IN province_ VARCHAR(100)
+)
+BEGIN
+Start Transaction;
+UPDATE patient
+SET nurse_id = nurse,
+	fname = f_name,
+    lname = l_name,
+    dob = dateofbirth,
+    phone = phoneno,
+    email = email_address,
+    postal_code = postal
+WHERE patient_id = pid;
+UPDATE address
+SET street = street_,
+	city = city_,
+    province = province_
+WHERE postal_code = postal;
+COMMIT;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE delete_patient (
+	IN pid INT
+)
+BEGIN
+Start Transaction;
+DELETE FROM patient WHERE patient_id = pid;
+COMMIT;
+END //
+DELIMITER ;
+
+DROP TABLE IF EXISTS department;
+CREATE TABLE department (
+	department_id INT NOT NULL AUTO_INCREMENT,
+    head_id INT NOT NULL,
+    dept_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    PRIMARY KEY (department_id),
+    FOREIGN KEY (head_id) REFERENCES doctor (doctor_id)
+)
+
+DELIMITER //
+CREATE PROCEDURE create_dept(
+	IN head INT,
+	IN dname VARCHAR(100),
+	IN demail VARCHAR(100),
+    IN dphone VARCHAR (15)
+)
+BEGIN
+START TRANSACTION;
+INSERT INTO department (head_id, dept_name, email, phone) VALUES (head, dname, demail, dphone);
+COMMIT;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE update_dept(
+	IN dept_id INT,
+    IN head INT,
+	IN dname VARCHAR (100),
+    IN demail VARCHAR(100),
+    IN dphone VARCHAR (15)
+)
+BEGIN 
+START TRANSACTION;
+UPDATE department
+SET dept_head = head,
+    department_name = dname,
+    email = demail,
+    phone = dphone
+WHERE department_id = dept_id;
+COMMIT;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE delete_dept(
+	IN dept_id INT
+)
+BEGIN
+START TRANSACTION;
+DELETE FROM department WHERE department_id = dept_id;
+COMMIT;
+END //
+DELIMITER ;
+
 --
 -- Dumping data for table `patient`
 --
