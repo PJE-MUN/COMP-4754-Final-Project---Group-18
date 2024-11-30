@@ -206,7 +206,7 @@ CREATE TABLE `patient` (
   CONSTRAINT `patient_ibfk_1` FOREIGN KEY (`nurse_id`) REFERENCES `nurse` (`nurse_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
+CREATE INDEX patient_index ON PATIENT (patient_id);
 --
 -- Dumping data for table `patient`
 --
@@ -216,7 +216,68 @@ LOCK TABLES `patient` WRITE;
 INSERT INTO `patient` VALUES (1,1,'Michael','Johnson','1990-05-12','1234567892','michael.johnson@example.com','A1B2C3'),(2,2,'Sarah','Williams','1985-11-23','0987654323','sarah.williams@example.com','D4E5F6'),(3,2,'Miah','Rahim','1999-11-04','3298479302','miah@rahim@hotmail.com','A1B1T8'),(4,1,'dihan1','na','1999-12-05','8989898989','na@ga.com','a1a2s1');
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
+DROP PROCEDURE IF EXISTS view_appts;
+DELIMITER //
+CREATE PROCEDURE view_appts(
+	IN username VARCHAR(100)
+    )
+BEGIN
+START TRANSACTION;
+	SELECT appt.date, appt.time, appt.reason, appt.priority, fullname(doc.fname, doc.lname) as Doctor, fullname(nur.fname, nur.lname) as Nurse
+	FROM appointment appt
+	INNER JOIN admin a ON a.patient_id = appt.patient_id
+    INNER JOIN doctor doc ON doc.doctor_id = appt.doctor_id
+    INNER JOIN nurse nur ON nur.nurse_id = appt.nurse_id
+    WHERE a.username = username;
+COMMIT;
+END //
+DELIMITER ;
 
+DROP PROCEDURE IF EXISTS view_prescriptions;
+DELIMITER //
+CREATE PROCEDURE view_prescriptions(
+	IN username VARCHAR(100)
+    )
+BEGIN
+START TRANSACTION;
+	SELECT prescription.start_date, prescription.duration, prescription.doses, drugs.name, fullname(doc.fname, doc.lname) as Doctor
+	FROM prescription
+	INNER JOIN admin a ON a.patient_id = prescription.patient_id
+    INNER JOIN doctor doc ON doc.doctor_id = prescription.doctor_id
+    INNER JOIN drugs ON drugs.drug_id = prescription.drug_id
+    WHERE a.username = username;
+COMMIT;
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS view_procs;
+DELIMITER //
+CREATE PROCEDURE view_procs(
+	IN username VARCHAR(100)
+    )
+BEGIN
+START TRANSACTION;
+	SELECT op.name, proc.date, fullname(doc.fname, doc.lname) as Doctor
+	FROM `procedure` proc
+	INNER JOIN admin a ON a.patient_id = proc.patient_id
+    INNER JOIN doctor doc ON doc.doctor_id = proc.doctor_id
+    INNER JOIN operations op ON op.procedure_id = proc.procedure_id
+    WHERE a.username = username;
+COMMIT;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE FUNCTION fullname(
+	fname VARCHAR(50),
+    lname VARCHAR(50)
+)
+RETURNS VARCHAR(100)
+DETERMINISTIC
+BEGIN
+RETURN CONCAT(fname, ' ', lname);
+END //
+DELIMITER ;
 --
 -- Table structure for table `prescription`
 --
@@ -248,6 +309,7 @@ LOCK TABLES `prescription` WRITE;
 INSERT INTO `prescription` VALUES (1,1,1,3,'2024-11-28','2 weeks'),(2,1,2,1,'2024-09-01','1 month');
 /*!40000 ALTER TABLE `prescription` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 --
 -- View to fetch prescription details

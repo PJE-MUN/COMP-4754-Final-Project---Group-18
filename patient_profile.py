@@ -22,7 +22,7 @@ def patient_dashboard(self, username):
 
     # Query patient details
     try:
-        conn = gen_sql_connection.my_sql_connector()
+        conn gen_sql_connection.my_sql_connector()
         cursor = conn.cursor()
 
         # Query to fetch patient information
@@ -45,16 +45,168 @@ def patient_dashboard(self, username):
             Email: {patient_info[4]}
             Postal Code: {patient_info[5]}
             """
-            lbl_patient_info = Label(details_frame, text=details_text, font=("Arial", 14), bg="white", fg="black", justify=LEFT)
+            lbl_patient_info = Label(details_frame, text=details_text, font=("Arial", 14), bg="white", fg="black",
+                                     justify=LEFT)
             lbl_patient_info.pack(pady=10, anchor="w")
         else:
             lbl_error = Label(details_frame, text="No patient details found.", font=("Arial", 14), bg="white", fg="red")
             lbl_error.pack(pady=10)
+        btn_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
+        btn_frame.place(x=250, y=450, width=1000, height=100)  # Slightly shifted to center
 
+        Button(btn_frame, text="View Appointments", font=("Arial", 16, "bold"), bg="blue", fg="white", width=15,
+               command=lambda: self.view_appointments_patient(username)).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="View Prescriptions", font=("Arial", 16, "bold"), bg="green", fg="white", width=15,
+               command=lambda: self.view_prescriptions_patient(username)).pack(side=LEFT, padx=20, pady=10)
+        Button(btn_frame, text="View Procedures", font=("Arial", 16, "bold"), bg="orange", fg="white", width=15,
+               command=lambda: self.view_procedures_patient(username)).pack(side=LEFT, padx=20, pady=10)
     except mysql.connector.Error as err:
         print(f"Database Error: {err}")
         messagebox.showerror("Database Error", f"Error: {err}")
 
+
+def view_appointments_patient(self, username):
+    view_win = Toplevel(self.root)
+    view_win.title("View Appointment Records")
+    view_win.geometry("1000x600")
+    try:
+        conn = gen_sql_connection.my_sql_connector()
+        cursor = conn.cursor(buffered=False)
+        cursor.callproc('view_appts', (username,))
+        for result in cursor.stored_results():
+            appts = result.fetchall()
+        conn.close()
+        notebook = ttk.Notebook(view_win)
+        notebook.pack(fill="both", expand=True)
+        # Tabs Placeholder
+        tabs = {"Appointments": None}
+        appointment_columns = ['Date', 'Time', 'Reason', 'Priority', 'Doctor', 'Nurse']
+
+        for tab_name, tab_frame in tabs.items():
+            if tab_frame:
+                notebook.forget(tab_frame)
+        for tab_name in tabs.keys():
+            tabs[tab_name] = ttk.Frame(notebook)
+            notebook.add(tabs[tab_name], text=tab_name)
+        # Frame for Treeview
+        tree_frame = Frame(tabs["Appointments"], padx=10, pady=10)
+        tree_frame.pack(fill="both", expand=True)
+
+        # Treeview for displaying data
+        tree = ttk.Treeview(tree_frame, columns=appointment_columns, show="headings")
+        tree.pack(fill="both", expand=True)
+
+        # Define column headings
+        for col in appointment_columns:
+            tree.heading(col, text=col.capitalize())
+            tree.column(col, width=120, anchor="center")
+
+            # Insert rows into Treeview
+        for row in appts:
+            tree.insert("", "end", values=row)
+    except mysql.connector.Error as err:
+        print(f"Database Error: {err}")
+        messagebox.showerror("Database Error", f"Error: {err}")
+
+    # Notebook (Tabbed View) - Initially Empty
+    notebook = ttk.Notebook(view_win)
+    notebook.pack(fill="both", expand=True)
+
+
+def view_prescriptions_patient(self, username):
+    view_win = Toplevel(self.root)
+    view_win.title("View Prescription Records")
+    view_win.geometry("1000x600")
+    try:
+        conn = gen_sql_connection.my_sql_connector()
+        cursor = conn.cursor(buffered=False)
+        cursor.callproc('view_prescriptions', (username,))
+        for result in cursor.stored_results():
+            prescriptions = result.fetchall()
+        conn.close()
+        notebook = ttk.Notebook(view_win)
+        notebook.pack(fill="both", expand=True)
+        # Tabs Placeholder
+        tabs = {"Prescriptions": None}
+        prescription_columns = ['Date', 'Duration', 'Doses', 'Drug Name', 'Doctor']
+
+        for tab_name, tab_frame in tabs.items():
+            if tab_frame:
+                notebook.forget(tab_frame)
+        for tab_name in tabs.keys():
+            tabs[tab_name] = ttk.Frame(notebook)
+            notebook.add(tabs[tab_name], text=tab_name)
+        # Frame for Treeview
+        tree_frame = Frame(tabs["Prescriptions"], padx=10, pady=10)
+        tree_frame.pack(fill="both", expand=True)
+
+        # Treeview for displaying data
+        tree = ttk.Treeview(tree_frame, columns=prescription_columns, show="headings")
+        tree.pack(fill="both", expand=True)
+
+        # Define column headings
+        for col in prescription_columns:
+            tree.heading(col, text=col.capitalize())
+            tree.column(col, width=120, anchor="center")
+
+            # Insert rows into Treeview
+        for row in prescriptions:
+            tree.insert("", "end", values=row)
+    except mysql.connector.Error as err:
+        print(f"Database Error: {err}")
+        messagebox.showerror("Database Error", f"Error: {err}")
+
+    # Notebook (Tabbed View) - Initially Empty
+    notebook = ttk.Notebook(view_win)
+    notebook.pack(fill="both", expand=True)
+
+
+def view_procedures_patient(self, username):
+    view_win = Toplevel(self.root)
+    view_win.title("View Procedure Records")
+    view_win.geometry("1000x600")
+    try:
+        conn = gen_sql_connection.my_sql_connector()
+        cursor = conn.cursor(buffered=False)
+        cursor.callproc('view_procs', (username,))
+        for result in cursor.stored_results():
+            procs = result.fetchall()
+        conn.close()
+        notebook = ttk.Notebook(view_win)
+        notebook.pack(fill="both", expand=True)
+        # Tabs Placeholder
+        tabs = {"Procedures": None}
+        proc_columns = ['Operation', 'Date', 'Doctor']
+
+        for tab_name, tab_frame in tabs.items():
+            if tab_frame:
+                notebook.forget(tab_frame)
+        for tab_name in tabs.keys():
+            tabs[tab_name] = ttk.Frame(notebook)
+            notebook.add(tabs[tab_name], text=tab_name)
+        # Frame for Treeview
+        tree_frame = Frame(tabs["Procedures"], padx=10, pady=10)
+        tree_frame.pack(fill="both", expand=True)
+
+        # Treeview for displaying data
+        tree = ttk.Treeview(tree_frame, columns=proc_columns, show="headings")
+        tree.pack(fill="both", expand=True)
+
+        # Define column headings
+        for col in proc_columns:
+            tree.heading(col, text=col.capitalize())
+            tree.column(col, width=120, anchor="center")
+
+            # Insert rows into Treeview
+        for row in procs:
+            tree.insert("", "end", values=row)
+    except mysql.connector.Error as err:
+        print(f"Database Error: {err}")
+        messagebox.showerror("Database Error", f"Error: {err}")
+
+    # Notebook (Tabbed View) - Initially Empty
+    notebook = ttk.Notebook(view_win)
+    notebook.pack(fill="both", expand=True)
 
 def display_patient_data(self, username, data_type):
     try:
