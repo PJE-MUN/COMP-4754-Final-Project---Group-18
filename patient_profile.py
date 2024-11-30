@@ -22,7 +22,7 @@ def patient_dashboard(self, username):
 
     # Query patient details
     try:
-        conn gen_sql_connection.my_sql_connector()
+        conn = gen_sql_connection.my_sql_connector()
         cursor = conn.cursor()
 
         # Query to fetch patient information
