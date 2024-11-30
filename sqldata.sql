@@ -250,6 +250,39 @@ INSERT INTO `prescription` VALUES (1,1,1,3,'2024-11-28','2 weeks'),(2,1,2,1,'202
 UNLOCK TABLES;
 
 --
+-- View to fetch prescription details
+--
+
+CREATE VIEW PrescriptionDetails AS
+	SELECT drug_id, doctor_id, patient_id, doses, start_date, duration
+		FROM prescription
+
+--
+-- Update prescription medical records
+--
+
+DELIMITER //
+CREATE PROCEDURE UpdatePrescription(
+    IN new_drug_id INT,
+	IN new_doctor_id INT,
+	IN new_patient_id INT,
+    IN new_doses INT,
+	IN new_start_date DATE,
+	IN new_duration TEXT
+)
+BEGIN
+    UPDATE prescription
+    SET drug_id = new_drug_id,
+        doctor_id = new_doctor_id,
+        patient_id = new_patient_id,
+        doses = new_doses,
+        start_date = new_start_date,
+        duration = new_duration
+    WHERE drug_id = new_drug_id;
+END //
+DELIMITER ;
+
+--
 -- Table structure for table `drugs`
 --
 
@@ -308,7 +341,7 @@ INSERT INTO `procedures` VALUES (1,1,2,1,'2023-07-10','patient needs post op car
 UNLOCK TABLES;
 
 --
--- Create a view to fetch patient details
+-- Create a view to fetch procedures details
 --
 
 CREATE VIEW ProcedureDetails AS
@@ -316,7 +349,7 @@ CREATE VIEW ProcedureDetails AS
 		FROM procedures
 
 --
--- Create a procedure to update medical records
+-- Update procedures records
 --
 
 DELIMITER //
