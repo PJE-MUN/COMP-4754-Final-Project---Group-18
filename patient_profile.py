@@ -22,12 +22,7 @@ def patient_dashboard(self, username):
 
     # Query patient details
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="replaceme",
-            password="password",  # Update as needed
-            database="hospital_db"
-        )
+        conn gen_sql_connection.my_sql_connector()
         cursor = conn.cursor()
 
         # Query to fetch patient information
@@ -75,12 +70,7 @@ def view_appointments_patient(self, username):
     view_win.title("View Appointment Records")
     view_win.geometry("1000x600")
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="replaceme",
-            password="password",  # Update as needed
-            database="hospital_db"
-        )
+        conn = gen_sql_connection.my_sql_connector()
         cursor = conn.cursor(buffered=False)
         cursor.callproc('view_appts', (username,))
         for result in cursor.stored_results():
@@ -128,12 +118,7 @@ def view_prescriptions_patient(self, username):
     view_win.title("View Prescription Records")
     view_win.geometry("1000x600")
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="replaceme",
-            password="password",  # Update as needed
-            database="hospital_db"
-        )
+        conn = gen_sql_connection.my_sql_connector()
         cursor = conn.cursor(buffered=False)
         cursor.callproc('view_prescriptions', (username,))
         for result in cursor.stored_results():
@@ -181,12 +166,7 @@ def view_procedures_patient(self, username):
     view_win.title("View Procedure Records")
     view_win.geometry("1000x600")
     try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="replaceme",
-            password="password",  # Update as needed
-            database="hospital_db"
-        )
+        conn = gen_sql_connection.my_sql_connector()
         cursor = conn.cursor(buffered=False)
         cursor.callproc('view_procs', (username,))
         for result in cursor.stored_results():
