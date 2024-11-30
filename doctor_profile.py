@@ -358,93 +358,53 @@ def doctor_update_dashboard(self):
         # Frame for input fields
         frame = Frame(update_win, padx=20, pady=20)
         frame.pack(fill="both", expand=True)
-        
-        # Drug ID to fetch
-        Label(frame, text="Enter Drug(Prescription) ID to Update Prescription:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+
+        labels = {
+            "drug_id": Label(frame, text="Enter Drug (Prescription) ID to Update:"),
+            "doctor_id": Label(frame, text="Doctor ID:"),
+            "patient_id": Label(frame, text="Patient ID:"),
+            "doses": Label(frame, text="Doses (Number Only):"),
+            "start_date": Label(frame, text="Start Date (YYYY-MM-DD):"),
+            "duration": Label(frame, text="Duration (milligrams in __ weeks):")
+        }
+
+        # Create input fields
+        labels["drug_id"].grid(row=0, column=0, padx=10, pady=5, sticky="w")
         drug_id_entry = Entry(frame, font=("Arial", 12), width=40)
         drug_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
-        # Fields for updating
-        fields = [
-            "Doctor ID:",
-            "Patient ID:",
-            "Doses:",
-            "Start Date (YYYY-MM-DD):",
-            "Duration:"
-        ]
-        entries = {}
+        labels["doctor_id"].grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        doctor_id_entry = Entry(frame, font=("Arial", 12), width=40)
+        doctor_id_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-        for i, field in enumerate(fields, start=1):
-            Label(frame, text=field, font=("Arial", 12), anchor="w").grid(row=i, column=0, padx=10, pady=5, sticky="w")
-            if "Duration" in field:  # Larger text box for Reason
-                entry = Text(frame, font=("Arial", 12), width=40, height=4, wrap="word")
-            else:
-                entry = Entry(frame, font=("Arial", 12), width=40)
-            entry.grid(row=i, column=1, padx=10, pady=5, sticky="w")
-            entries[field] = entry
+        labels["patient_id"].grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        patient_id_entry = Entry(frame, font=("Arial", 12), width=40)
+        patient_id_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-        # Function to fetch current details of the prescription
-        def fetch_prescription():
-            drug_id = drug_id_entry.get().strip()
-            if not drug_id:
-                messagebox.showerror("Error", "Drug ID is required to fetch details.")
-                return
+        labels["doses"].grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        doses_entry = Entry(frame, font=("Arial", 12), width=40)
+        doses_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
+        labels["start_date"].grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        start_date_entry = Entry(frame, font=("Arial", 12), width=40)
+        start_date_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+        labels["duration"].grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        duration_entry = Entry(frame, font=("Arial", 12), width=40)
+        duration_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+
+        def update():
             try:
+                drug_id = drug_id_entry.get().strip()
+                doctor_id = doctor_id_entry.get().strip()
+                patient_id = patient_id_entry.get().strip()
+                doses = doses_entry.get().strip()
+                start_date = start_date_entry.get().strip()
+                duration = duration_entry.get().strip()
+
                 conn = gen_sql_connection.my_sql_connector()
                 cursor = conn.cursor()
-                query = """
-                    SELECT drug_id, doctor_id, patient_id, doses, start_date,  duration
-                    FROM prescription
-                    WHERE drug_id = %s
-                """
-                cursor.execute(query, (drug_id,))
-                result = cursor.fetchone()
-                conn.close()
-
-                if result:
-                    # Populate fields with current data
-                    fields_data = ["Drug_ID:", "Doctor ID:", "Patient ID:", "Doses:", "Start_Date:",  "Duration:"]
-                    for field, value in zip(fields_data, result):
-                        if "Duration" in field:
-                            entries[field].delete("1.0", "end")
-                            entries[field].insert("1.0", value)
-                        else:
-                            entries[field].delete(0, "end")
-                            entries[field].insert(0, value)
-                else:
-                    messagebox.showerror("Error", "No Prescription found with the provided Drug ID.")
-            except mysql.connector.Error as err:
-                print(f"Database Error: {err}")
-                messagebox.showerror("Database Error", f"Error: {err}")
-
-        # Function to save updated details
-        def save_updates():
-            drug_id = drug_id_entry.get().strip()
-            if not drug_id:
-                messagebox.showerror("Error", "Drug ID is required to save updates.")
-                return
-
-            new_values = []
-            for field in fields:
-                if "Duration" in field:
-                    new_values.append(entries[field].get("1.0", "end").strip())  # Multi-line text box
-                else:
-                    new_values.append(entries[field].get().strip())
-
-            if not all(new_values):
-                messagebox.showerror("Error", "All fields are required.")
-                return
-
-            try:
-                conn = gen_sql_connection.my_sql_connector()
-                cursor = conn.cursor()
-                query = """
-                    UPDATE prescription
-                    SET drug_id = %s, doctor_id = %s, patient_id = %s, doses = %s, start_date = %s, duration = %s
-                    WHERE drug_id = %s
-                """
-                cursor.execute(query, (*new_values, drug_id))
+                cursor.callproc("UpdatePrescription", (int(drug_id), int(doctor_id), int(patient_id), int(doses), start_date, duration))
                 conn.commit()
                 conn.close()
                 messagebox.showinfo("Success", "Prescription updated successfully!")
@@ -453,14 +413,9 @@ def doctor_update_dashboard(self):
                 print(f"Database Error: {err}")
                 messagebox.showerror("Database Error", f"Error: {err}")
 
-        # Fetch Button
-        Button(frame, text="Fetch Details", font=("Arial", 12, "bold"), bg="blue", fg="white", command=fetch_prescription).grid(
-            row=len(fields) + 1, column=0, padx=10, pady=20, sticky="w"
-        )
-
-        # Save Button
-        Button(frame, text="Save Updates", font=("Arial", 12, "bold"), bg="green", fg="white", command=save_updates).grid(
-            row=len(fields) + 1, column=1, padx=10, pady=20, sticky="e"
+        # Update Button
+        Button(frame, text="Update", font=("Arial", 12, "bold"), bg="blue", fg="white", command=update).grid(
+            row=len(labels) + 1, column=0, padx=10, pady=20, sticky="w"
         )
     
     def update_procedure():
@@ -468,92 +423,52 @@ def doctor_update_dashboard(self):
         frame = Frame(update_win, padx=20, pady=20)
         frame.pack(fill="both", expand=True)
 
-        # Procedure ID to fetch
-        Label(frame, text="Enter Procedure ID to Update:", font=("Arial", 12), anchor="w").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        labels = {
+            "procedure_id": Label(frame, text="Enter Procedure ID to Update:"),
+            "appointment_id": Label(frame, text="Appointment ID:"),
+            "doctor_id": Label(frame, text="Doctor ID:"),
+            "patient_id": Label(frame, text="Patient ID:"),
+            "procedure_date": Label(frame, text="Date (YYYY-MM-DD):"),
+            "notes": Label(frame, text="Notes:")
+        }
+
+        # Create input fields
+        labels["procedure_id"].grid(row=0, column=0, padx=10, pady=5, sticky="w")
         procedure_id_entry = Entry(frame, font=("Arial", 12), width=40)
         procedure_id_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
-        # Fields for updating
-        fields = [
-            "Appointment ID:",
-            "Doctor ID:",
-            "Patient ID:",
-            "Date (YYYY-MM-DD)::",
-            "Notes:"
-        ]
-        entries = {}
+        labels["appointment_id"].grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        appointment_id_entry = Entry(frame, font=("Arial", 12), width=40)
+        appointment_id_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-        for i, field in enumerate(fields, start=1):
-            Label(frame, text=field, font=("Arial", 12), anchor="w").grid(row=i, column=0, padx=10, pady=5, sticky="w")
-            if "Notes" in field:  # Larger text box for Reason
-                entry = Text(frame, font=("Arial", 12), width=40, height=4, wrap="word")
-            else:
-                entry = Entry(frame, font=("Arial", 12), width=40)
-            entry.grid(row=i, column=1, padx=10, pady=5, sticky="w")
-            entries[field] = entry
+        labels["doctor_id"].grid(row=2, column=0, padx=10, pady=5, sticky="w")
+        doctor_id_entry = Entry(frame, font=("Arial", 12), width=40)
+        doctor_id_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-        # Function to fetch current details of the appointment
-        def fetch_procedure():
-            procedure_id = procedure_id_entry.get().strip()
-            if not procedure_id:
-                messagebox.showerror("Error", "Procedure ID is required to fetch details.")
-                return
+        labels["patient_id"].grid(row=3, column=0, padx=10, pady=5, sticky="w")
+        patient_id_entry = Entry(frame, font=("Arial", 12), width=40)
+        patient_id_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
+        labels["procedure_date"].grid(row=4, column=0, padx=10, pady=5, sticky="w")
+        date_entry = Entry(frame, font=("Arial", 12), width=40)
+        date_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+
+        labels["notes"].grid(row=5, column=0, padx=10, pady=5, sticky="w")
+        notes_entry = Entry(frame, font=("Arial", 12), width=40)
+        notes_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+
+        def update():
             try:
+                procedure_id = procedure_id_entry.get().strip()
+                appointment_id = appointment_id_entry.get().strip()
+                doctor_id = doctor_id_entry.get().strip()
+                patient_id = patient_id_entry.get().strip()
+                date = date_entry.get().strip()
+                notes = notes_entry.get().strip()
+
                 conn = gen_sql_connection.my_sql_connector()
                 cursor = conn.cursor()
-                query = """
-                    SELECT procedure_id, appointment_id, doctor_id, patient_id, procedure_date, notes
-                    FROM procedures
-                    WHERE procedure_id = %s
-                """
-                cursor.execute(query, (procedure_id,))
-                result = cursor.fetchone()
-                conn.close()
-
-                if result:
-                    # Populate fields with current data
-                    fields_data = ["Procedure_ID:", "Appointment_ID:", "Doctor ID:", "Patient ID:", "Date (YYYY-MM-DD):", "Notes:"]
-                    for field, value in zip(fields_data, result):
-                        if "Notes" in field:
-                            entries[field].delete("1.0", "end")
-                            entries[field].insert("1.0", value)
-                        else:
-                            entries[field].delete(0, "end")
-                            entries[field].insert(0, value)
-                else:
-                    messagebox.showerror("Error", "No Procedure found with the provided Procedure ID.")
-            except mysql.connector.Error as err:
-                print(f"Database Error: {err}")
-                messagebox.showerror("Database Error", f"Error: {err}")
-
-        # Function to save updated details
-        def save_updates():
-            procedure_id = procedure_id_entry.get().strip()
-            if not procedure_id:
-                messagebox.showerror("Error", "Procedure ID is required to save updates.")
-                return
-
-            new_values = []
-            for field in fields:
-                if "Notes" in field:
-                    new_values.append(entries[field].get("1.0", "end").strip())  # Multi-line text box
-                else:
-                    new_values.append(entries[field].get().strip())
-
-            if not all(new_values):
-                messagebox.showerror("Error", "All fields are required.")
-                return
-
-            try:
-                conn = gen_sql_connection.my_sql_connector()
-                cursor = conn.cursor()
-                query = """
-                    UPDATE procedures
-                    SET procedure_id = %s, appointment_id = %s, doctor_id = %s, patient_id = %s, procedure_date = %s, notes = %s
-                    WHERE procedure_id = %s
-                """
-                cursor.execute(query, (*new_values, procedure_id))
+                cursor.callproc("UpdateProcedure", (int(procedure_id), int(appointment_id), int(doctor_id), int(patient_id), date, notes))
                 conn.commit()
                 conn.close()
                 messagebox.showinfo("Success", "Procedure updated successfully!")
@@ -562,15 +477,12 @@ def doctor_update_dashboard(self):
                 print(f"Database Error: {err}")
                 messagebox.showerror("Database Error", f"Error: {err}")
 
-        # Fetch Button
-        Button(frame, text="Fetch Details", font=("Arial", 12, "bold"), bg="blue", fg="white", command=fetch_procedure).grid(
-            row=len(fields) + 1, column=0, padx=10, pady=20, sticky="w"
+        # Update Button
+        Button(frame, text="Update", font=("Arial", 12, "bold"), bg="blue", fg="white", command=update).grid(
+            row=len(labels) + 1, column=0, padx=10, pady=20, sticky="w"
         )
 
-        # Save Button
-        Button(frame, text="Save Updates", font=("Arial", 12, "bold"), bg="green", fg="white", command=save_updates).grid(
-            row=len(fields) + 1, column=1, padx=10, pady=20, sticky="e"
-        )
+
 
     # Center and enlarge buttons        
     Button(btn_frame, text="Update Prescription", font=("Arial", 16, "bold"), bg="orange", fg="white", width=18, command=update_prescription).pack(side=LEFT, padx=20, pady=10)
