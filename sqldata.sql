@@ -468,6 +468,28 @@ END //
 DELIMITER ;
 
 --
+-- Delete prescription record
+--
+DELIMITER $$
+
+CREATE FUNCTION delete_prescription(id INT) 
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE result_message VARCHAR(255);
+    IF EXISTS (SELECT 1 FROM prescription WHERE drug_id = id) THEN
+        DELETE FROM patients WHERE drug_id = id;
+        SET result_message = CONCAT('Record with Prescription ID ', id, ' has been successfully deleted.');
+    ELSE
+        SET result_message = CONCAT('No record found with Prescription ID ', id, '.');
+    END IF;
+
+    RETURN result_message;
+END $$
+
+DELIMITER ;
+
+--
 -- Table structure for table `drugs`
 --
 
@@ -556,6 +578,25 @@ BEGIN
         notes = new_notes
     WHERE procedure_id = new_procedure_id;
 END //
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE FUNCTION delete_procedure(id INT) 
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE result_message VARCHAR(255);
+    IF EXISTS (SELECT 1 FROM procedures WHERE procedure_id = id) THEN
+        DELETE FROM procedures WHERE procedure_id = id;
+        SET result_message = CONCAT('Record with Procedure ID ', id, ' has been successfully deleted.');
+    ELSE
+        SET result_message = CONCAT('No record found with Procedure ID ', id, '.');
+    END IF;
+
+    RETURN result_message;
+END $$
+
 DELIMITER ;
 
 --
