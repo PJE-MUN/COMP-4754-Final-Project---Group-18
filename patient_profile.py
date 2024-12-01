@@ -53,13 +53,12 @@ def patient_dashboard(self, username):
             lbl_error.pack(pady=10)
         btn_frame = Frame(self.root, bg="white", bd=5, relief=RIDGE)
         btn_frame.place(x=250, y=450, width=1000, height=100)  # Slightly shifted to center
-
         Button(btn_frame, text="View Appointments", font=("Arial", 16, "bold"), bg="blue", fg="white", width=15,
-               command=lambda: self.view_appointments_patient(username)).pack(side=LEFT, padx=20, pady=10)
+               command=lambda: view_appointments_patient(self,username)).pack(side=LEFT, padx=20, pady=10)
         Button(btn_frame, text="View Prescriptions", font=("Arial", 16, "bold"), bg="green", fg="white", width=15,
-               command=lambda: self.view_prescriptions_patient(username)).pack(side=LEFT, padx=20, pady=10)
+               command=lambda: view_prescriptions_patient(self,username)).pack(side=LEFT, padx=20, pady=10)
         Button(btn_frame, text="View Procedures", font=("Arial", 16, "bold"), bg="orange", fg="white", width=15,
-               command=lambda: self.view_procedures_patient(username)).pack(side=LEFT, padx=20, pady=10)
+               command=lambda: view_procedures_patient(self,username)).pack(side=LEFT, padx=20, pady=10)
     except mysql.connector.Error as err:
         print(f"Database Error: {err}")
         messagebox.showerror("Database Error", f"Error: {err}")
